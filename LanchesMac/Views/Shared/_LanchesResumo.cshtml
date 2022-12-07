@@ -1,23 +1,5 @@
 ﻿@model Lanche
 
-@*<div class="col-sm-4 col-md-4 col-lg-4">
-    <p><img src="@Model.ImagemUrl" class="img-fluid"></p>
-    <p><img src="file:///C:/Users/RerumSP/Downloads/pexels-valeria-boltneva-1639557.jpg" class="img-fluid"></p>
-    <h3>Preço : @Model.Preco.ToString("c")</h3>
-    <h4>@Model.Nome</h4>
-    <p>@Model.DescricaoCurta</p>
-</div>*@
-@*<div class="col-sm-4 col-md-4 col-lg-4">
-    <div class="card" style="width: 18rem;">
-        <img src="@Model.ImagemUrl" class="card-img-top" alt="...">
-        <div class="card-body">
-            <h5 class="card-title">@Model.Nome</h5>
-            <p>@Model.DescricaoCurta</p>
-            <h3>Preço : @Model.Preco.ToString("c")</h3>
-            <a class="btn btn-primary" href="@Url.Action("AdicionarItemNoCarrinhoCompra", "CarrinhoCompra", new{LancheId = Model.LancheId} )">Adicionar ao carrinho</a>          
-        </div>
-    </div>
-</div>*@
 <div class="col-sm-4 col-md-4 col-lg-4">
     <p><img src="@Model.ImagemUrl" class="img-fluid"></p>
     <h3>Preço : @Model.Preco.ToString("c")</h3>

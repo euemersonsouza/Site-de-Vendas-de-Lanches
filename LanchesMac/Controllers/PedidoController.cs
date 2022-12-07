@@ -1,6 +1,12 @@
 ﻿using LanchesMac.Models;
 using LanchesMac.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Net.Mail;
+using static System.Net.Mime.MediaTypeNames;
+using System.Reflection;
+using static System.Net.WebRequestMethods;
+using LanchesMac.Services;
 
 namespace LanchesMac.Controllers
 {
@@ -8,11 +14,13 @@ namespace LanchesMac.Controllers
     {
         private readonly IPedidoRepository _pedidoRepository;
         private readonly CarrinhoCompra _carrinhoCompra;
+        private readonly IEmailSendercs _emailSendercs;
 
-        public PedidoController(IPedidoRepository pedidoRepository, CarrinhoCompra carrinhoCompra)
+        public PedidoController(IPedidoRepository pedidoRepository, CarrinhoCompra carrinhoCompra, IEmailSendercs emailSendercs)
         {
             _pedidoRepository = pedidoRepository;
             _carrinhoCompra = carrinhoCompra;
+            _emailSendercs = emailSendercs;
         }
 
         [HttpGet]
@@ -56,6 +64,7 @@ namespace LanchesMac.Controllers
                 //define mensagens ao cliente
                 ViewBag.CheckoutCompletoMensagem = "Obrigado pelo seu pedido :)";
                 ViewBag.TotalPedido = _carrinhoCompra.GetCarrinhoCompraTotal();
+                EnviarEmailCheckout(items, pedido, pedido.Email);
 
                 //limpa o carrinho do cliente
                 _carrinhoCompra.LimparCarrinho();
@@ -65,5 +74,83 @@ namespace LanchesMac.Controllers
             }
             return View(pedido);
         }
+
+        private string substituiTextosEmail(List<CarrinhoCompraItem> items, Pedido p, string assunto)
+        {
+            string textoAlterado = assunto;
+
+            if (assunto.Contains("[PEDIDOID]"))
+            {
+                textoAlterado = textoAlterado.Replace("[PEDIDOID]", p.PedidoId.ToString());
+            }
+            if (assunto.Contains("[ITENS]"))
+            {
+                string textoItens = @"<html>
+                                <head>
+                                <style>
+                                table, th, td {
+                                    border: 1px solid white;
+                                    border-collapse: collapse;
+                                }
+                                th, td {
+                                    background-color: #96D4D4;
+                                }
+                                </style>
+                                </head>
+                                <body>
+
+                                <table style=""width:100%"">
+                                      <tr>
+                                        <th>Nome</th>
+                                        <th>Descrição</th> 
+                                        <th>Preço</th>
+                                      </tr>
+                                      <tr>
+                                        <td>[NOMELANCHE]</td>
+                                        <td>[DESCRICAOLANCHE]</td>
+                                        <td>[PRECOTOTAL]</td>
+                                      </tr>                              
+                            </table>
+                            </body>
+                            </html>";
+                string textoAlteradoItens = "";
+                foreach (var item in items)
+                {
+                    textoAlteradoItens = textoAlteradoItens + textoItens;
+
+                    //textoAlteradoItens = textoAlteradoItens.Replace("[QTD]", item.Lanche.ImagemUrl.ToString());
+                    textoAlteradoItens = textoAlteradoItens.Replace("[NOMELANCHE]", item.Lanche.Nome.ToString());
+                    textoAlteradoItens = textoAlteradoItens.Replace("[DESCRICAOLANCHE]", item.Lanche.DescricaoDetalhada.ToString());
+                    textoAlteradoItens = textoAlteradoItens.Replace("[PRECOTOTAL]", p.PedidoTotal.ToString("#,##0.00"));
+                    //textoAlteradoItens = textoAlteradoItens.Replace("[QTD]", gerador.quantidade.ToString());
+                    //textoAlteradoItens = textoAlteradoItens.Replace("[TOTAL]", gerador.totalItem.ToString("#,##0.00"));
+
+                }
+
+                textoAlterado = textoAlterado.Replace("[ITENS]", textoAlteradoItens);
+
+            }
+
+            return textoAlterado;
+        }
+        public void EnviarEmailCheckout(List<CarrinhoCompraItem> items, Pedido p, string email)
+        {
+            try
+            {
+                string corpo = "";
+                string assunto = "";
+                string caminho = @"C:/ModeloEmail/Index.html";
+                assunto = "Hobs Lanches- Pagamento do pedido [PEDIDOID] efetuado com sucesso!";
+                corpo = System.IO.File.ReadAllText(caminho);                
+                assunto = this.substituiTextosEmail(items, p, assunto);
+                corpo = this.substituiTextosEmail(items, p, corpo);
+                _emailSendercs.SendEmailAsync(email, assunto, corpo);               
+            }
+            catch (Exception ex)
+            {
+                Console.Write("Ocorreram problemas no envio do e-mail. " + ex.ToString());
+            }
+        }
+
     }
 }
