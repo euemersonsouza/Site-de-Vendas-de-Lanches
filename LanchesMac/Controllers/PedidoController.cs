@@ -83,45 +83,51 @@ namespace LanchesMac.Controllers
             {
                 textoAlterado = textoAlterado.Replace("[PEDIDOID]", p.PedidoId.ToString());
             }
+            if (assunto.Contains("[PRECOTOTAL]"))
+            {
+                textoAlterado = textoAlterado.Replace("[PRECOTOTAL]", p.PedidoTotal.ToString());
+            }
+            if (assunto.Contains("[NOMECLIENTE]"))
+            {
+                textoAlterado = textoAlterado.Replace("[NOMECLIENTE]", p.Nome.ToString());
+            }if (assunto.Contains("[DTPEDIDOENVIADO]"))
+            {
+                textoAlterado = textoAlterado.Replace("[DTPEDIDOENVIADO]", p.PedidoEnviado.ToString());
+            }
             if (assunto.Contains("[ITENS]"))
             {
-                string textoItens = @"<html>
-                                <head>
-                                <style>
-                                table, th, td {
-                                    border: 1px solid white;
-                                    border-collapse: collapse;
-                                }
-                                th, td {
-                                    background-color: #96D4D4;
-                                }
-                                </style>
-                                </head>
-                                <body>
+                string textoItens = @"<div class=""card"">
+                <div class=""card-body"">         
+                    <table class=""table"">
+                        <tr>
+                            <th>Imagem</th>
+                            <th>Quantidade</th>
+                            <th>Lanche</th>
+                            <th>Descrição</th>
+                            <th>Preço</th>
+                        </tr>               
+                        <tr>
+                            <td><img src=""[IMGURL]"" width=""40"" height=""40"" /></td>
+                            <td>[QTD]</td>
+                            <td>[NOMELANCHE]</td>
+                            <td>[DESCRICAOLANCHE]</td>
+                            <td>[PRECOLANCHE]</td>
+                        </tr>
+                        </table>
 
-                                <table style=""width:100%"">
-                                      <tr>
-                                        <th>Nome</th>
-                                        <th>Descrição</th> 
-                                        <th>Preço</th>
-                                      </tr>
-                                      <tr>
-                                        <td>[NOMELANCHE]</td>
-                                        <td>[DESCRICAOLANCHE]</td>
-                                        <td>[PRECOTOTAL]</td>
-                                      </tr>                              
-                            </table>
-                            </body>
-                            </html>";
+                        <h4>Valor Total do Pedido: [TOTALPEDIDO]</h4>
+                        </div>
+                </div>";
                 string textoAlteradoItens = "";
                 foreach (var item in items)
                 {
                     textoAlteradoItens = textoAlteradoItens + textoItens;
 
-                    //textoAlteradoItens = textoAlteradoItens.Replace("[QTD]", item.Lanche.ImagemUrl.ToString());
+                    textoAlteradoItens = textoAlteradoItens.Replace("[IMGURL]", item.Lanche.ImagemUrl.ToString());
+                    textoAlteradoItens = textoAlteradoItens.Replace("[QTD]", item.Quantidade.ToString());
                     textoAlteradoItens = textoAlteradoItens.Replace("[NOMELANCHE]", item.Lanche.Nome.ToString());
                     textoAlteradoItens = textoAlteradoItens.Replace("[DESCRICAOLANCHE]", item.Lanche.DescricaoDetalhada.ToString());
-                    textoAlteradoItens = textoAlteradoItens.Replace("[PRECOTOTAL]", p.PedidoTotal.ToString("#,##0.00"));
+                    textoAlteradoItens = textoAlteradoItens.Replace("[PRECOLANCHE]", item.Lanche.Preco.ToString("#,##0.00"));
                     //textoAlteradoItens = textoAlteradoItens.Replace("[QTD]", gerador.quantidade.ToString());
                     //textoAlteradoItens = textoAlteradoItens.Replace("[TOTAL]", gerador.totalItem.ToString("#,##0.00"));
 
