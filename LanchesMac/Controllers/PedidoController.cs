@@ -7,6 +7,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Reflection;
 using static System.Net.WebRequestMethods;
 using LanchesMac.Services;
+using System.Globalization;
 
 namespace LanchesMac.Controllers
 {
@@ -85,39 +86,29 @@ namespace LanchesMac.Controllers
             }
             if (assunto.Contains("[PRECOTOTAL]"))
             {
-                textoAlterado = textoAlterado.Replace("[PRECOTOTAL]", p.PedidoTotal.ToString());
+                textoAlterado = textoAlterado.Replace("[PRECOTOTAL]", p.PedidoTotal.ToString("C", CultureInfo.CurrentCulture));
             }
             if (assunto.Contains("[NOMECLIENTE]"))
             {
                 textoAlterado = textoAlterado.Replace("[NOMECLIENTE]", p.Nome.ToString());
-            }if (assunto.Contains("[DTPEDIDOENVIADO]"))
+            }
+            if (assunto.Contains("[SOBRENOMECLIENTE]"))
+            {
+                textoAlterado = textoAlterado.Replace("[SOBRENOMECLIENTE]", p.Sobrenome.ToString());
+            }
+            if (assunto.Contains("[DTPEDIDOENVIADO]"))
             {
                 textoAlterado = textoAlterado.Replace("[DTPEDIDOENVIADO]", p.PedidoEnviado.ToString());
             }
             if (assunto.Contains("[ITENS]"))
             {
-                string textoItens = @"<div class=""card"">
-                <div class=""card-body"">         
-                    <table class=""table"">
-                        <tr>
-                            <th>Imagem</th>
-                            <th>Quantidade</th>
-                            <th>Lanche</th>
-                            <th>Descrição</th>
-                            <th>Preço</th>
-                        </tr>               
-                        <tr>
-                            <td><img src=""[IMGURL]"" width=""40"" height=""40"" /></td>
-                            <td>[QTD]</td>
-                            <td>[NOMELANCHE]</td>
-                            <td>[DESCRICAOLANCHE]</td>
-                            <td>[PRECOLANCHE]</td>
-                        </tr>
-                        </table>
-
-                        <h4>Valor Total do Pedido: [TOTALPEDIDO]</h4>
-                        </div>
-                </div>";
+                string textoItens = @"<tr>
+                                            <td><img src=""[IMGURL]"" width=""40"" height=""40"" /></td>
+                                            <td style=""text-align: center"">[QTD]</td>
+                                            <td>[NOMELANCHE]</td>
+                                            <td>[DESCRICAOLANCHE]</td>
+                                            <td>[PRECOLANCHE]</td>
+                                          </tr> ";
                 string textoAlteradoItens = "";
                 foreach (var item in items)
                 {
@@ -127,7 +118,7 @@ namespace LanchesMac.Controllers
                     textoAlteradoItens = textoAlteradoItens.Replace("[QTD]", item.Quantidade.ToString());
                     textoAlteradoItens = textoAlteradoItens.Replace("[NOMELANCHE]", item.Lanche.Nome.ToString());
                     textoAlteradoItens = textoAlteradoItens.Replace("[DESCRICAOLANCHE]", item.Lanche.DescricaoDetalhada.ToString());
-                    textoAlteradoItens = textoAlteradoItens.Replace("[PRECOLANCHE]", item.Lanche.Preco.ToString("#,##0.00"));
+                    textoAlteradoItens = textoAlteradoItens.Replace("[PRECOLANCHE]", item.Lanche.Preco.ToString("C", CultureInfo.CurrentCulture));
                     //textoAlteradoItens = textoAlteradoItens.Replace("[QTD]", gerador.quantidade.ToString());
                     //textoAlteradoItens = textoAlteradoItens.Replace("[TOTAL]", gerador.totalItem.ToString("#,##0.00"));
 
