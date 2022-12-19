@@ -26,26 +26,7 @@ namespace LanchesMac.Controllers
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginVM)
-        {
-            //if (!ModelState.IsValid)
-            //{
-            //    return View(loginVM);
-            //}
-            //var user = await _userManager.FindByNameAsync(loginVM.UserName);
-            //if (user == null)
-            //{
-            //    var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
-            //    if (result.Succeeded)
-            //    {
-            //        if (string.IsNullOrEmpty(loginVM.ReturnUrl))
-            //        {
-            //            return RedirectToAction("Home", "Index");
-            //        }
-            //        return View(loginVM.ReturnUrl);
-            //    }
-            //}
-            //ModelState.AddModelError("", "Falha ao realizar login!");
-            //return View(loginVM);
+        {           
             if (!ModelState.IsValid)
                 return View(loginVM);
 
