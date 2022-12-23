@@ -8,6 +8,7 @@ using System.Reflection;
 using static System.Net.WebRequestMethods;
 using LanchesMac.Services;
 using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LanchesMac.Controllers
 {
@@ -23,12 +24,13 @@ namespace LanchesMac.Controllers
             _carrinhoCompra = carrinhoCompra;
             _emailSendercs = emailSendercs;
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult Checkout()
         {
             return View();
         }
+        [Authorize]
         [HttpPost]
         public IActionResult Checkout(Pedido pedido)
         {
