@@ -9,11 +9,13 @@ namespace LanchesMac.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private string caminhoServidor;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IWebHostEnvironment sistema)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            caminhoServidor = sistema.WebRootPath;
         }
 
         [HttpGet]
@@ -65,7 +67,8 @@ namespace LanchesMac.Controllers
 
                 if (result.Succeeded)
                 {
-                   // await _signInManager.SignInAsync(user, isPersistent: false);
+                    // await _signInManager.SignInAsync(user, isPersistent: false);
+                    await _userManager.AddToRoleAsync(user, "Member");
                     return RedirectToAction("Login", "Account");
                 }
                 else
@@ -83,5 +86,21 @@ namespace LanchesMac.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+        [HttpPost]
+        public async Task<IActionResult> UploadFoto(LoginViewModel loginVM)
+        {
+            //User user = new User();
+            var usuario = HttpContext.User;
+            string caminhoSalvarImagem = caminhoServidor;
+            var arquivo = HttpContext.Request.Form.Files;
+            loginVM.Img = arquivo;
+           // var res = user.Upload(usuario, caminhoSalvarImagem, arquivo);
+            return Ok();
+        }
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
     }
 }

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\images\hambuger__9.png" />
+    <Content Remove="wwwroot\images\Logo_Marca %281%29.png" />
   </ItemGroup>
 
   <ItemGroup>

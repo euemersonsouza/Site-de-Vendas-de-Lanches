@@ -28,6 +28,16 @@ public class Startup
         services.AddTransient<ILancheRepository, LancheRepository>();
         services.AddTransient<ICategoriaRepository, CategoriaRepository>();
         services.AddTransient<IPedidoRepository, PedidoRepository>();
+        services.AddScoped<ISeedUserRoleInitial, SeedUserRolesInitial>();
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Admin",
+                politica =>
+                {
+                    politica.RequireRole("Admin");
+                });
+        });
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped(sp => CarrinhoCompra.GetCarrinho(sp));
@@ -42,7 +52,7 @@ public class Startup
 
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ISeedUserRoleInitial seedUserRoleInitial)
     {
         if (env.IsDevelopment())
         {
@@ -57,7 +67,12 @@ public class Startup
 
         app.UseStaticFiles();
         app.UseRouting();
-       
+        //cria os perfis
+        seedUserRoleInitial.SeedRoles();
+        //cria os usuários e atribui ao perfil
+        seedUserRoleInitial.SeedUsers();
+
+
         app.UseSession();
         
         app.UseAuthentication();
