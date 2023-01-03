@@ -1,15 +1,11 @@
 ﻿@model LanchesMac.Models.Categoria
-
 @{
     ViewData["Title"] = "Edit";
 }
-
-<h1>Edite</h1>
-
-<h4>Categoria</h4>
+<h3>Editar Categoria</h3>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="CategoriaId" />
@@ -25,13 +21,15 @@
             </div>
             </br>
             <div class="form-group">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
+                <input type="submit" value="Salvar" class="btn btn-outline-success" /> |
+                <a asp-action="Index" class="btn btn-outline-info">Retornar</a>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Retornar a lista</a>
+    
 </div>
+
 
